@@ -2,7 +2,7 @@
 
 import SwiftUI
 
-struct ClosureSubView3: View {
+struct SubView: View {
     
     private let uiState: UIState
     
@@ -26,7 +26,7 @@ struct ClosureSubView3: View {
         let destinationCurrency: String
         let onTapAction: () -> Void
         
-        static func == (lhs: ClosureSubView3.UIState, rhs: ClosureSubView3.UIState) -> Bool {
+        static func == (lhs: SubView.UIState, rhs: SubView.UIState) -> Bool {
             lhs.baseCurrency == rhs.baseCurrency &&
             lhs.destinationCurrency == rhs.destinationCurrency
         }
@@ -34,5 +34,5 @@ struct ClosureSubView3: View {
 }
 
 #Preview {
-    ClosureSubView3(uiState: .init(baseCurrency: "ABC", destinationCurrency: "BCD", onTapAction: {}))
+    SubView(uiState: .init(baseCurrency: "ABC", destinationCurrency: "BCD", onTapAction: {}))
 }

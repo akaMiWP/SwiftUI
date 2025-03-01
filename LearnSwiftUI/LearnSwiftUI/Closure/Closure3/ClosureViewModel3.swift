@@ -21,7 +21,7 @@ final class ClosureViewModel3: ObservableObject {
             name: "",
             closure: {
                 AnyView(
-                    ClosureSubView3(
+                    SubView(
                         uiState: .init(
                             baseCurrency: self.baseCurrency,
                             destinationCurrency: self.destinationCurrency,
