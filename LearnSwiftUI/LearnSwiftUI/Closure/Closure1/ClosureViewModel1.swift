@@ -3,7 +3,7 @@
 import Combine
 import SwiftUI
 
-final class ClosureViewModel: ObservableObject {
+final class ClosureViewModel1: ObservableObject {
     @Published var closure: () -> AnyView = { AnyView(EmptyView())}
     var onTapAction: () -> Void = {}
     
