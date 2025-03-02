@@ -7,7 +7,7 @@ protocol ClosureActorProtocol {
     var contentUIPublisher: AnyPublisher<ClosureView4.UIState, Never> { get }
 }
 
-final class ClosureActor: ClosureActorProtocol {
+struct ClosureActor: ClosureActorProtocol {
     
     var contentUIPublisher: AnyPublisher<ClosureView4.UIState, Never>
     
@@ -15,33 +15,40 @@ final class ClosureActor: ClosureActorProtocol {
     private var destinationCurrency = "YYY"
     
     init(onTapActionPublisher: PassthroughSubject<Void, Never>) {
-        contentUIPublisher = Just(ClosureView4.UIState.default)
-            .eraseToAnyPublisher()
+        contentUIPublisher = Empty().eraseToAnyPublisher()
         
+        var mutableSelf = self  // Capture a mutable copy
+
         contentUIPublisher = onTapActionPublisher
-            .handleEvents(receiveOutput: { [weak self] in
-                guard let self else { return }
-                let temp = baseCurrency
-                baseCurrency = destinationCurrency
-                destinationCurrency = temp
+            .handleEvents(receiveOutput: {
+                mutableSelf.swapCurrencies()
             })
-            .map {
-                let uiState: ClosureView4.UIState = .init(
-                    name: "",
-                    closure: {
-                        AnyView(
-                            SubView(
-                                uiState: .init(
-                                    baseCurrency: self.baseCurrency,
-                                    destinationCurrency: self.destinationCurrency,
-                                    onTapAction: onTapActionPublisher.send
-                                )
-                            )
-                        )
-                    }
-                )
-                return uiState
+            .map { _ in
+                mutableSelf.createUIState(onTapActionPublisher: onTapActionPublisher)
             }
             .eraseToAnyPublisher()
+    }
+    
+    private mutating func swapCurrencies() {
+        let temp = baseCurrency
+        baseCurrency = destinationCurrency
+        destinationCurrency = temp
+    }
+
+    private func createUIState(onTapActionPublisher: PassthroughSubject<Void, Never>) -> ClosureView4.UIState {
+        return ClosureView4.UIState(
+            name: "",
+            closure: {
+                AnyView(
+                    SubView(
+                        uiState: .init(
+                            baseCurrency: self.baseCurrency,
+                            destinationCurrency: self.destinationCurrency,
+                            onTapAction: { onTapActionPublisher.send() }
+                        )
+                    )
+                )
+            }
+        )
     }
 }
